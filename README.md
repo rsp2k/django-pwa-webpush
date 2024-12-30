@@ -189,6 +189,6 @@ You can overwrite it in a template directory if you continue using the default `
 
 Links
 =====
-[Push API (mdn.org)](https://developer.mozilla.org/en-US/docs/Web/API/Push_API)
-[How Push Works (web.dev)](https://web.dev/articles/push-notifications-how-push-works)
+* [Push API (mdn.org)](https://developer.mozilla.org/en-US/docs/Web/API/Push_API)
+* [How Push Works (web.dev)](https://web.dev/articles/push-notifications-how-push-works)
 
