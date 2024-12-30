@@ -1,10 +1,10 @@
 import json
 
 from django import template
+from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.safestring import mark_safe
 
-from pov_provisioner import settings
 from .. import app_settings
 from ..utils import get_templatetag_context, add_static_prefix_to_srcs
 
