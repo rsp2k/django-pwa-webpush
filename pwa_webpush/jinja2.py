@@ -1,17 +1,14 @@
-import arrow
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from jinja2.ext import Extension
-from markupsafe import Markup
 
 from jinja2 import contextfunction
-from jinja2 import nodes
 from pwa_webpush.utils import get_templatetag_context
 
 
 class WebPushExtension(Extension):
     def __init__(self, environment):
-        super(WebPushExtension, self).__init__(environment)
+        super().__init__(environment)
         environment.globals["webpush_header"] = self.webpush_header
         environment.globals["webpush_button"] = self.webpush_button
 

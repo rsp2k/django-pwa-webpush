@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -8,41 +9,54 @@ from django.views.generic import TemplateView
 
 from pwa_webpush.forms import SubscriptionForm, WebPushForm
 from . import app_settings
-from .custom_site_class import CustomSite
+from .utils import add_static_prefix_to_srcs
 
 
 def manifest(request):
+    """
+    https://developer.mozilla.org/en-US/docs/Web/Manifest
+
+    :param request:
+    :return:
+    """
     context = {
         setting_name: getattr(app_settings, setting_name)
         for setting_name in dir(app_settings)
         if setting_name.startswith("PWA_")
     }
+    context = add_static_prefix_to_srcs(context)
 
-    site = CustomSite(request)
+    context['vapid_public_key'] = settings.WEBPUSH_SETTINGS['VAPID_PUBLIC_KEY']
 
     if request.scheme not in context.get("PWA_APP_START_URL"):
-        context["PWA_APP_START_URL"] = site.get_external_url(context.get("PWA_APP_START_URL"))
+        context["PWA_APP_START_URL"] = request.build_absolute_uri(
+            context.get("PWA_APP_START_URL")
+        )
 
     if request.scheme not in context.get("PWA_APP_SCOPE"):
-        context["PWA_APP_SCOPE"] = site.get_external_url(context.get("PWA_APP_SCOPE"))
+        context["PWA_APP_SCOPE"] = request.build_absolute_uri(
+            context.get("PWA_APP_SCOPE")
+        )
 
-    return render(request, "manifest.json", context)
+    return render(request, "manifest.json", context, content_type="application/json")
 
 
 def offline(request):
     return render(request, "offline.html")
 
 
-def process_subscription_data(post_data):
+def process_subscription_data(post_data, request):
     """Process the subscription data according to out model"""
     subscription_data = post_data.pop("subscription", {})
+
     # As our database saves the auth and p256dh key in separate field,
     # we need to refactor it and insert the auth and p256dh keys in the same dictionary
     keys = subscription_data.pop("keys", {})
     subscription_data.update(keys)
+
     # Insert the browser name and user agent
+    subscription_data["user_agent"] = request.META['HTTP_USER_AGENT']
     subscription_data["browser"] = post_data.pop("browser")
-    subscription_data["user_agent"] = post_data.pop("user_agent")
     return subscription_data
 
 
@@ -55,13 +69,13 @@ def save_info(request):
     except ValueError:
         return HttpResponse(status=400)
 
-    # Process the subscription data to mach with the model
-    subscription_data = process_subscription_data(post_data)
+    # Process the subscription data to match with the model
+    subscription_data = process_subscription_data(post_data, request=request)
     subscription_form = SubscriptionForm(subscription_data)
     # pass the data through WebPushForm for validation purpose
     web_push_form = WebPushForm(post_data)
 
-    # Check if subscriptioninfo and the web push info bot are valid
+    # Check if subscriptioninfo and the web push info are valid
     if subscription_form.is_valid() and web_push_form.is_valid():
         # Get the cleaned data in order to get status_type and group_name
         web_push_data = web_push_form.cleaned_data
@@ -78,10 +92,11 @@ def save_info(request):
             )
 
             # If subscribe is made, means object is created. So return 201
-            if status_type == "subscribe":
+            if status_type == WebPushForm.SUBSCRIBE:
                 return HttpResponse(status=201)
+
             # Unsubscribe is made, means object is deleted. So return 202
-            elif "unsubscribe":
+            elif WebPushForm.UNSUBSCRIBE:
                 return HttpResponse(status=202)
 
     return HttpResponse(status=400)
@@ -95,3 +110,9 @@ class ServiceWorkerView(TemplateView):
 
     template_name = "serviceworker.js"
     content_type = "application/javascript"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['vapid_public_key'] = settings.WEBPUSH_SETTINGS['VAPID_PUBLIC_KEY']
+
+        return context

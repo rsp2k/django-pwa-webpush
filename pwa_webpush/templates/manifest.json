@@ -11,5 +11,6 @@
   "theme_color": {{ PWA_APP_THEME_COLOR|js }},
   "icons": {{ PWA_APP_ICONS|js }},
   "dir": {{ PWA_APP_DIR|js }},
-  "lang": {{ PWA_APP_LANG|js }}
+  "lang": {{ PWA_APP_LANG|js }},
+  "gcm_sender_id": {{ vapid_public_key|js }}
 }

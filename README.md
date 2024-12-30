@@ -186,3 +186,9 @@ By default, the offline view is implemented in `templates/offline.html`
 You can overwrite it in a template directory if you continue using the default `serviceworker.js`.
 
 
+
+Links
+=====
+[Push API (mdn.org)](https://developer.mozilla.org/en-US/docs/Web/API/Push_API)
+[How Push Works (web.dev)](https://web.dev/articles/push-notifications-how-push-works)
+

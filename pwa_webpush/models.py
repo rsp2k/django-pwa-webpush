@@ -13,22 +13,31 @@ class Group(models.Model):
 
 
 class SubscriptionInfo(models.Model):
+    """
+    Stores the PushSubscription object returned by a browser
+    """
     browser = models.CharField(max_length=100)
-    user_agent = models.CharField(max_length=500)
+    user_agent = models.CharField(
+        max_length=500, default="None"
+    )
     endpoint = models.URLField(max_length=500)
     auth = models.CharField(max_length=100)
     p256dh = models.CharField(max_length=100)
 
     def __str__(self):
-        return "Subscription Information for %s" % self.browser
+        return f"Subscription Information for {self.user_agent}"
 
 
 class PushInformation(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="webpush_info", blank=True, null=True, on_delete=models.CASCADE
     )
-    subscription = models.ForeignKey(SubscriptionInfo, related_name="webpush_info", on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, related_name="webpush_info", blank=True, null=True, on_delete=models.CASCADE)
+    subscription = models.ForeignKey(
+        SubscriptionInfo, related_name="webpush_info", on_delete=models.CASCADE
+    )
+    group = models.ForeignKey(
+        Group, related_name="webpush_info", blank=True, null=True, on_delete=models.CASCADE
+    )
 
     def save(self, *args, **kwargs):
         # Check whether user or the group field is present
@@ -41,7 +50,7 @@ class PushInformation(models.Model):
 
     def __str__(self):
 
-        return "Push Subscription for: %s" % self.user
+        return f"Push Subscription for: {self.user}"
 
 
 class PushMessage(models.Model):
@@ -56,9 +65,6 @@ class PushMessage(models.Model):
 
     def __str__(self):
         if self.sent:
-            retn = "%s, sent on %s" % (self.title, self.send_on)
+            return f"{self.title}, sent on {self.send_on}"
 
-        else:
-            retn = "%s, to be sent on %s" % (self.title, self.send_on)
-
-        return retn
+        return f"{self.title}, to be sent on {self.send_on}"

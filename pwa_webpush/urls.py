@@ -11,6 +11,7 @@ last_modified_date = timezone.now().strftime("%Y-%m-%d_%H:%M:%S")
 
 # Serve up serviceworker.js and manifest.json at the root
 urlpatterns = [
+
     path(
         "jsi18n/",
         cache_page(86400, key_prefix="js18n-%s" % last_modified_date)(JavaScriptCatalog.as_view(packages=["webpush"])),

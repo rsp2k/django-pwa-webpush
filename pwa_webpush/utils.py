@@ -1,5 +1,8 @@
+import os
+
 from django.conf import settings
 from django.forms.models import model_to_dict
+from django.templatetags.static import static
 from django.urls import reverse
 
 from pywebpush import WebPushException, webpush
@@ -83,14 +86,44 @@ def _process_subscription_info(subscription):
 
 
 def get_templatetag_context(context):
-    request = context["request"]
     vapid_public_key = getattr(settings, "WEBPUSH_SETTINGS", {}).get("VAPID_PUBLIC_KEY", "")
+    user = None
+    if request := context.get("request"):
+        user = request.user
 
     data = {
         "group": context.get("webpush", {}).get("group"),
-        "user": getattr(request, "user", None),
+        "user": user,
         "vapid_public_key": vapid_public_key,
         "webpush_save_url": reverse("save_webpush_info"),
     }
 
     return data
+
+
+def add_static_prefix_to_srcs(context):
+    # Add static prefix to urls, cant do it in settings cause apps aren't initialized yet
+    icon_static_urls = []
+    for icon in getattr(settings, "PWA_APP_ICONS"):
+        static_file = icon.get("src")
+        src = static(static_file)
+        size = icon.get('size')
+        icon_static_urls.append({
+            "src": src,
+            "size": size,
+        })
+    context["PWA_APP_ICONS"] = icon_static_urls
+
+    # Add static prefix to urls, cant do it in settings cause apps aren't initialized yet
+    splash_screens = []
+    for splash_screen in context.get("PWA_APP_SPLASH_SCREEN"):
+        static_file = splash_screen.get("src")
+        src = static(static_file)
+        media = splash_screen.get('media')
+        splash_screens.append({
+            "src": src,
+            "media": media,
+        })
+    context["PWA_APP_SPLASH_SCREEN"] = splash_screens
+
+    return context

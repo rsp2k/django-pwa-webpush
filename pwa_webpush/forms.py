@@ -5,7 +5,12 @@ from .models import Group, PushInformation, SubscriptionInfo
 
 class WebPushForm(forms.Form):
     group = forms.CharField(max_length=255, required=False)
-    status_type = forms.ChoiceField(choices=[("subscribe", "subscribe"), ("unsubscribe", "unsubscribe")])
+    status_type = forms.ChoiceField(
+        choices=[
+            (SUBSCRIBE := "subscribe", "subscribe"),
+            (UNSUBSCRIBE := "unsubscribe", "unsubscribe")
+        ]
+    )
 
     def save_or_delete(self, subscription, user, status_type, group_name):
         data = {}
@@ -23,7 +28,7 @@ class WebPushForm(forms.Form):
 
         # If unsubscribe is called, that means need to delete the browser
         # and notification info from server.
-        if status_type == "unsubscribe":
+        if status_type == self.UNSUBSCRIBE:
             push_info.delete()
             subscription.delete()
 

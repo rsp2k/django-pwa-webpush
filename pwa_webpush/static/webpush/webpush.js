@@ -9,6 +9,10 @@ window.addEventListener('load', function() {
   subBtn = document.getElementById('webpush-subscribe-button');
   messageBox = document.getElementById('webpush-message');
 
+  if(!subBtn) {
+      return;
+  }
+
   subBtn.addEventListener('click',
     function() {
       subBtn.disabled = true;
@@ -29,9 +33,12 @@ window.addEventListener('load', function() {
           );
       }
       // If service worker not supported, show warning to the message box
-      else {  
-        messageBox.textContent = 'Service Worker is not supported in your Browser!';
-        messageBox.style.display = 'block'; 
+      else {
+          console.log("Service Worker not supported in this browser!")
+          if(messageBox) {
+              messageBox.textContent = 'Service Worker is not supported in your Browser!';
+              messageBox.style.display = 'block';
+          }
       }
     }
   );

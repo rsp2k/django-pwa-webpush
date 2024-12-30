@@ -4,8 +4,9 @@ from django import template
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.safestring import mark_safe
 
+from pov_provisioner import settings
 from .. import app_settings
-from ..utils import get_templatetag_context
+from ..utils import get_templatetag_context, add_static_prefix_to_srcs
 
 register = template.Library()
 
@@ -19,11 +20,16 @@ def js(obj):
 @register.inclusion_tag("pwa.html", takes_context=True)
 def progressive_web_app_meta(context):
     # Pass all PWA_* settings into the template
-    return {
+    context.update({
         setting_name: getattr(app_settings, setting_name)
         for setting_name in dir(app_settings)
         if setting_name.startswith("PWA_")
-    }
+    })
+    context['vapid_public_key'] = settings.WEBPUSH_SETTINGS['VAPID_PUBLIC_KEY']
+
+    context = add_static_prefix_to_srcs(context)
+
+    return context
 
 
 @register.filter
