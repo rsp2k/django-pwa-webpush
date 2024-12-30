@@ -65,12 +65,61 @@ PWA_APP_DISPLAY = 'standalone'
 PWA_APP_SCOPE = '/',
 PWA_APP_ORIENTATION = 'any'
 PWA_APP_START_URL = '/'
+
 PWA_APP_ICONS = [
-    {
-        'src': '/static/images/my_app_icon.png',
-        'sizes': '160x160'
-    }
+    {"src": "pwa/icon-72x72.png", "size": "72x72"},
+    {"src": "pwa/icon-96x96.png", "size": "96x96"},
+    {"src": "pwa/icon-128x128.png", "size": "128x128"},
+    {"src": "pwa/icon-144x144.png", "size": "144x144"},
+    {"src": "pwa/icon-152x152.png", "size": "152x152"},
+    {"src": "pwa/icon-192x192.png", "size": "192x192"},
+    {"src": "pwa/icon-384x384.png", "size": "384x384"},
+    {"src": "pwa/icon-512x512.png", "size": "512x512"},
 ]
+
+PWA_APP_SPLASH_SCREEN = [
+    {
+        "src": "pwa/splash_screen-640x1136.png",
+        "media": "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)",
+    },
+    {
+        "src": "pwa/splash_screen-750x1334.png",
+        "media": "(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)",
+    },
+    {
+        "src": "pwa/splash_screen-1242x2208.png",
+        "media": "(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)",
+    },
+    {
+        "src": "pwa/splash_screen-1125x2436.png",
+        "media": "(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)",
+    },
+    {
+        "src": "pwa/splash_screen-828x1792.png",
+        "media": "(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)",
+    },
+    {
+        "src": "pwa/splash_screen-1242x2688.png",
+        "media": "(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)",
+    },
+    {
+        "src": "pwa/splash_screen-1536x2048.png",
+        "media": "(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)",
+    },
+    {
+        "src": "pwa/splash_screen-1668x2224.png",
+        "media": "(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)",
+    },
+    {
+        "src": "pwa/splash_screen-1668x2388.png",
+        "media": "(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)",
+    },
+    {
+        "src": "pwa/splash_screen-2048x2732.png",
+        "media": "(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)",
+    },
+]
+
 PWA_APP_SPLASH_SCREEN = [
     {
         'src': '/static/images/icons/splash-640x1136.png',
