@@ -103,15 +103,9 @@ def get_templatetag_context(context):
 
 def add_static_prefix_to_srcs(context):
     # Add static prefix to urls, cant do it in settings cause apps aren't initialized yet
-    icon_static_urls = []
-    for icon in getattr(settings, "PWA_APP_ICONS"):
-        static_file = icon.get("src")
-        src = static(static_file)
-        size = icon.get('size')
-        icon_static_urls.append({
-            "src": src,
-            "size": size,
-        })
+    icon_static_urls = {}
+    for size, static_file in getattr(settings, "PWA_APP_ICONS").items():
+        icon_static_urls[size] = static(static_file)
     context["PWA_APP_ICONS"] = icon_static_urls
 
     # Add static prefix to urls, cant do it in settings cause apps aren't initialized yet
